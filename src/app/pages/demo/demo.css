@@ -1,0 +1,4 @@
+/* Component-specific styles — most styling is done via Tailwind in the template */
+:host {
+  display: block;
+}

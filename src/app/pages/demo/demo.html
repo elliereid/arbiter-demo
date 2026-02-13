@@ -1,0 +1,468 @@
+<!-- ═══════════════════════════════════════════════════════════════════
+     ARBITER DEMO — Investor Walkthrough
+     Each step is shown/hidden with @if based on the currentStep signal.
+     ═══════════════════════════════════════════════════════════════════ -->
+
+<div class="min-h-screen bg-surface-950">
+
+  <!-- ── Top navigation bar ── -->
+  <header class="sticky top-0 z-50 border-b border-surface-700 bg-surface-900/80 backdrop-blur-lg">
+    <div class="container flex items-center justify-between py-4">
+      <!-- Logo / Name -->
+      <div class="flex items-center gap-3">
+        <a routerLink="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-arbiter-500 font-mono text-sm font-bold text-white">
+            A
+          </div>
+          <div>
+            <h1 class="text-lg font-semibold text-white">Arbiter</h1>
+            <p class="text-xs text-slate-500">Bittensor Documentation Subnet</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Step indicator (center) -->
+      <app-step-indicator [steps]="steps" [currentStep]="currentStep()" />
+
+      <!-- Function selector -->
+      <div class="flex items-center gap-2">
+        @for (fn of functions; track fn.raw.functionName; let i = $index) {
+          <button
+            class="rounded-lg px-3 py-1.5 text-xs font-medium transition-all"
+            [class]="selectedFunctionIndex() === i
+              ? 'bg-arbiter-500/20 text-arbiter-400 ring-1 ring-arbiter-500/40'
+              : 'text-slate-500 hover:text-slate-300 hover:bg-surface-800'"
+            (click)="selectFunction(i)"
+          >
+            {{ fn.raw.functionName }}
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main content area ── -->
+  <main class="container py-10">
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 0: THE PROBLEM
+         Show the undocumented function with context about PyPI
+         ════════════════════════════════════════════════════════ -->
+    @if (currentStep() === 0) {
+      <div class="animate-fade-in space-y-8">
+        <!-- Hero text -->
+        <div class="max-w-2xl space-y-3">
+          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 1 — The Problem</p>
+          <h2 class="text-4xl font-bold text-white">
+            Most open-source code is <span class="text-red-400">undocumented</span>.
+          </h2>
+          <p class="text-lg leading-relaxed text-slate-400">
+            PyPI hosts over 450,000 Python packages. The majority of public functions have
+            no docstrings, no type hints, and no usage examples. This is the function a miner
+            will be asked to document.
+          </p>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="flex gap-6">
+          <div class="rounded-xl border border-surface-700 bg-surface-800 px-5 py-3">
+            <p class="text-2xl font-bold text-white">450K+</p>
+            <p class="text-xs text-slate-500">PyPI packages</p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800 px-5 py-3">
+            <p class="text-2xl font-bold text-red-400">~70%</p>
+            <p class="text-xs text-slate-500">Functions undocumented</p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800 px-5 py-3">
+            <p class="text-2xl font-bold text-yellow-400">0</p>
+            <p class="text-xs text-slate-500">Type hints on this function</p>
+          </div>
+        </div>
+
+        <!-- The raw function -->
+        <div class="space-y-2">
+          <p class="text-sm text-slate-500">
+            <span class="font-mono text-arbiter-400">{{ currentFunction().raw.packageName }}</span>
+            &nbsp;→&nbsp;
+            <span class="font-mono">{{ currentFunction().raw.modulePath }}.{{ currentFunction().raw.functionName }}</span>
+          </p>
+          <app-code-block
+            [title]="currentFunction().raw.modulePath + '.py'"
+            [code]="currentFunction().raw.sourceCode"
+          />
+        </div>
+
+        <!-- Function metadata -->
+        <div class="flex gap-4 text-sm text-slate-500">
+          <span>Parameters: <span class="font-mono text-slate-300">{{ currentFunction().raw.paramCount }}</span></span>
+          <span>Type hints: <span class="font-mono text-red-400">none</span></span>
+          <span>Complexity: <span class="font-mono text-slate-300">{{ currentFunction().raw.complexity }}</span></span>
+          <span>Docstring: <span class="font-mono text-red-400">none</span></span>
+        </div>
+
+        <!-- Mini terminal showing task selection -->
+        <app-terminal-simulation
+          title="arbiter-validator ~ task selection"
+          [lines]="terminalLines()"
+          [active]="currentStep() === 0"
+          [lineDelay]="70"
+          [charDelay]="15"
+        />
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 1: MINER RESPONSE
+         Side-by-side good vs bad submission
+         ════════════════════════════════════════════════════════ -->
+    @if (currentStep() === 1) {
+      <div class="animate-fade-in space-y-8">
+        <div class="max-w-2xl space-y-3">
+          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 2 — Miner Response</p>
+          <h2 class="text-4xl font-bold text-white">
+            Miners compete to <span class="text-arbiter-400">document</span> it.
+          </h2>
+          <p class="text-lg leading-relaxed text-slate-400">
+            Each miner receives the same undocumented function and submits documentation:
+            a docstring, type annotations, and executable code examples. Compare a quality
+            submission against a lazy one.
+          </p>
+        </div>
+
+        <!-- Toggle between good/bad -->
+        <div class="flex gap-2">
+          <button
+            class="rounded-lg px-4 py-2 text-sm font-medium transition-all"
+            [class]="showGoodSubmission()
+              ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/40'
+              : 'text-slate-500 hover:text-slate-300 hover:bg-surface-800'"
+            (click)="toggleSubmission(true)"
+          >
+            ✓ Good Submission
+          </button>
+          <button
+            class="rounded-lg px-4 py-2 text-sm font-medium transition-all"
+            [class]="!showGoodSubmission()
+              ? 'bg-red-500/20 text-red-400 ring-1 ring-red-500/40'
+              : 'text-slate-500 hover:text-slate-300 hover:bg-surface-800'"
+            (click)="toggleSubmission(false)"
+          >
+            ✗ Bad Submission
+          </button>
+        </div>
+
+        <!-- Submission content -->
+        @if (showGoodSubmission()) {
+          <div class="animate-fade-in space-y-6">
+            <div class="flex items-center gap-2 text-sm">
+              <span class="rounded-md bg-emerald-500/20 px-2 py-0.5 font-mono text-xs text-emerald-400">
+                {{ currentFunction().goodSubmission.minerId }}
+              </span>
+              <span class="text-slate-500">submitted documentation</span>
+            </div>
+
+            <!-- Two-column layout: docstring + types on left, example on right -->
+            <div class="grid gap-6 lg:grid-cols-2">
+              <div class="space-y-4">
+                <app-code-block title="Docstring" [code]="currentFunction().goodSubmission.docstring" />
+                <app-code-block title="Type Annotations" [code]="currentFunction().goodSubmission.typeAnnotations" />
+              </div>
+              <div>
+                <app-code-block title="Code Examples (executable)" [code]="currentFunction().goodSubmission.codeExample" />
+              </div>
+            </div>
+          </div>
+        } @else {
+          <div class="animate-fade-in space-y-6">
+            <div class="flex items-center gap-2 text-sm">
+              <span class="rounded-md bg-red-500/20 px-2 py-0.5 font-mono text-xs text-red-400">
+                {{ currentFunction().badSubmission.minerId }}
+              </span>
+              <span class="text-slate-500">submitted documentation</span>
+            </div>
+
+            <div class="grid gap-6 lg:grid-cols-2">
+              <div class="space-y-4">
+                <app-code-block title="Docstring" [code]="currentFunction().badSubmission.docstring" />
+                <app-code-block title="Type Annotations" [code]="currentFunction().badSubmission.typeAnnotations" />
+              </div>
+              <div>
+                <app-code-block title="Code Examples (executable)" [code]="currentFunction().badSubmission.codeExample" />
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 2: SCORING ENGINE
+         The "money shot" — run verification and show scores
+         ════════════════════════════════════════════════════════ -->
+    @if (currentStep() === 2) {
+      <div class="animate-fade-in space-y-8">
+        <div class="max-w-2xl space-y-3">
+          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 3 — The Scoring Engine</p>
+          <h2 class="text-4xl font-bold text-white">
+            Code is the <span class="text-arbiter-400">judge</span>.
+          </h2>
+          <p class="text-lg leading-relaxed text-slate-400">
+            No human scoring. No subjective reviews. The validator runs each submission
+            through deterministic checks: execute the code examples, verify the types,
+            measure parameter coverage. Code either works or it doesn't.
+          </p>
+        </div>
+
+        <!-- Verify button -->
+        @if (!verificationRun()) {
+          <button
+            class="rounded-xl bg-arbiter-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-arbiter-500/30 transition-all hover:bg-arbiter-600 hover:shadow-arbiter-500/40 active:scale-95"
+            (click)="runVerification()"
+          >
+            ▶ Run Verification Engine
+          </button>
+        } @else {
+          <div class="flex items-center gap-2 text-sm text-arbiter-400">
+            <span class="inline-block h-2 w-2 rounded-full bg-arbiter-500"></span>
+            Verification complete
+          </div>
+        }
+
+        <!-- Side-by-side scoring -->
+        @if (verificationRun()) {
+          <div class="animate-slide-up grid gap-8 lg:grid-cols-2">
+            <!-- Good submission scores -->
+            <div class="space-y-5 rounded-2xl border border-emerald-500/20 bg-surface-900 p-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="rounded-md bg-emerald-500/20 px-2 py-0.5 font-mono text-xs text-emerald-400">
+                    {{ currentFunction().goodSubmission.minerId }}
+                  </span>
+                  <span class="text-sm text-slate-400">Good Submission</span>
+                </div>
+                <span class="font-mono text-2xl font-bold text-emerald-400">
+                  {{ currentFunction().goodScore.totalScore }}
+                </span>
+              </div>
+
+              <div class="space-y-4">
+                <app-score-bar
+                  label="Example Execution"
+                  weight="40%"
+                  [score]="currentFunction().goodScore.exampleExecution"
+                  [animate]="animateScores()"
+                />
+                <app-score-bar
+                  label="Type Accuracy"
+                  weight="30%"
+                  [score]="currentFunction().goodScore.typeAccuracy"
+                  [animate]="animateScores()"
+                />
+                <app-score-bar
+                  label="Parameter Coverage"
+                  weight="20%"
+                  [score]="currentFunction().goodScore.parameterCoverage"
+                  [animate]="animateScores()"
+                />
+              </div>
+
+              <!-- Execution log -->
+              <div class="space-y-1.5 border-t border-surface-700 pt-4">
+                <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Verification Log</p>
+                <div class="space-y-1 font-mono text-xs">
+                  <p class="text-emerald-400">✓ Code example executed successfully</p>
+                  <p class="text-emerald-400">✓ All type annotations match runtime types</p>
+                  <p class="text-emerald-400">✓ All {{ currentFunction().raw.paramCount }}/{{ currentFunction().raw.paramCount }} parameters documented</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Bad submission scores -->
+            <div class="space-y-5 rounded-2xl border border-red-500/20 bg-surface-900 p-6">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <span class="rounded-md bg-red-500/20 px-2 py-0.5 font-mono text-xs text-red-400">
+                    {{ currentFunction().badSubmission.minerId }}
+                  </span>
+                  <span class="text-sm text-slate-400">Bad Submission</span>
+                </div>
+                <span class="font-mono text-2xl font-bold text-red-400">
+                  {{ currentFunction().badScore.totalScore }}
+                </span>
+              </div>
+
+              <div class="space-y-4">
+                <app-score-bar
+                  label="Example Execution"
+                  weight="40%"
+                  [score]="currentFunction().badScore.exampleExecution"
+                  [animate]="animateScores()"
+                />
+                <app-score-bar
+                  label="Type Accuracy"
+                  weight="30%"
+                  [score]="currentFunction().badScore.typeAccuracy"
+                  [animate]="animateScores()"
+                />
+                <app-score-bar
+                  label="Parameter Coverage"
+                  weight="20%"
+                  [score]="currentFunction().badScore.parameterCoverage"
+                  [animate]="animateScores()"
+                />
+              </div>
+
+              <!-- Execution log -->
+              <div class="space-y-1.5 border-t border-surface-700 pt-4">
+                <p class="text-xs font-medium uppercase tracking-wider text-slate-500">Verification Log</p>
+                <div class="space-y-1 font-mono text-xs">
+                  <p class="text-red-400">✗ Code example raised TypeError</p>
+                  <p class="text-red-400">✗ text: expected str, got int annotation</p>
+                  <p class="text-yellow-400">△ Only {{ Math.round(currentFunction().badScore.parameterCoverage * currentFunction().raw.paramCount) }}/{{ currentFunction().raw.paramCount }} parameters documented</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Key insight callout -->
+          <div class="animate-slide-up rounded-xl border border-arbiter-500/30 bg-arbiter-500/5 p-5">
+            <p class="text-sm font-medium text-arbiter-400">💡 Key Insight</p>
+            <p class="mt-1 text-sm leading-relaxed text-slate-400">
+              The scoring is entirely deterministic. No human reviewer, no LLM judge, no subjective
+              evaluation. Code execution is binary — it works or it doesn't. Types either match or
+              they don't. This eliminates the <strong class="text-white">Validator Trust Problem</strong>
+              that plagues other Bittensor subnets, because there are no answers to leak.
+            </p>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- ════════════════════════════════════════════════════════
+         STEP 3: THE NETWORK
+         How it all fits into Bittensor
+         ════════════════════════════════════════════════════════ -->
+    @if (currentStep() === 3) {
+      <div class="animate-fade-in space-y-8">
+        <div class="max-w-2xl space-y-3">
+          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 4 — The Network</p>
+          <h2 class="text-4xl font-bold text-white">
+            Powered by <span class="text-arbiter-400">Bittensor</span>.
+          </h2>
+          <p class="text-lg leading-relaxed text-slate-400">
+            Arbiter runs as a Bittensor subnet. Miners earn TAO by producing high-quality
+            documentation. The better the docs, the higher the score, the more they earn.
+            Market incentives drive documentation quality across the entire Python ecosystem.
+          </p>
+        </div>
+
+        <!-- Network flow diagram (simplified) -->
+        <div class="grid gap-6 lg:grid-cols-4">
+          <!-- Validator -->
+          <div class="space-y-3 rounded-2xl border border-surface-700 bg-surface-900 p-5 text-center">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-arbiter-500/20 text-2xl">
+              🔍
+            </div>
+            <h3 class="font-semibold text-white">Validator</h3>
+            <p class="text-xs leading-relaxed text-slate-500">
+              Selects undocumented functions from PyPI and sends tasks to miners. Runs deterministic scoring.
+            </p>
+          </div>
+
+          <!-- Arrow -->
+          <div class="flex items-center justify-center">
+            <div class="space-y-2 text-center">
+              <div class="text-2xl text-arbiter-400">→</div>
+              <p class="text-xs text-slate-600">Task assigned</p>
+            </div>
+          </div>
+
+          <!-- Miners -->
+          <div class="space-y-3 rounded-2xl border border-surface-700 bg-surface-900 p-5 text-center">
+            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-yellow-500/20 text-2xl">
+              ⛏️
+            </div>
+            <h3 class="font-semibold text-white">Miners</h3>
+            <p class="text-xs leading-relaxed text-slate-500">
+              Write documentation with docstrings, type annotations, and executable examples. Compete for best scores.
+            </p>
+          </div>
+
+          <!-- Arrow back -->
+          <div class="flex items-center justify-center">
+            <div class="space-y-2 text-center">
+              <div class="text-2xl text-arbiter-400">→</div>
+              <p class="text-xs text-slate-600">TAO rewards</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Why it can't be gamed -->
+        <div class="grid gap-6 lg:grid-cols-3">
+          <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
+            <p class="text-sm font-semibold text-white">🔒 No answer leaking</p>
+            <p class="mt-2 text-xs leading-relaxed text-slate-500">
+              Validators don't know the "right" documentation — they only know whether code
+              examples execute correctly. There's nothing to leak.
+            </p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
+            <p class="text-sm font-semibold text-white">🎲 Random task selection</p>
+            <p class="mt-2 text-xs leading-relaxed text-slate-500">
+              Functions are selected randomly from 450K+ packages. Miners can't predict
+              or pre-compute what they'll be asked to document.
+            </p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
+            <p class="text-sm font-semibold text-white">📊 Deterministic scoring</p>
+            <p class="mt-2 text-xs leading-relaxed text-slate-500">
+              Every validator independently arrives at the same score. No subjectivity,
+              no collusion surface, no gaming vector.
+            </p>
+          </div>
+        </div>
+
+        <!-- Scale & future -->
+        <div class="rounded-xl border border-arbiter-500/30 bg-arbiter-500/5 p-5">
+          <p class="text-sm font-medium text-arbiter-400">🚀 What's Next</p>
+          <p class="mt-1 text-sm leading-relaxed text-slate-400">
+            Arbiter starts with Python and PyPI, then expands to NPM (JavaScript), Cargo (Rust),
+            and more — with a unified scoring interface across all languages. The generated documentation
+            becomes a public good and a commercial API, creating value for the entire developer ecosystem.
+          </p>
+        </div>
+      </div>
+    }
+
+    <!-- ── Navigation buttons ── -->
+    <div class="mt-12 flex items-center justify-between border-t border-surface-800 pt-6">
+      <button
+        class="rounded-lg px-5 py-2.5 text-sm font-medium text-slate-400 transition-all hover:bg-surface-800 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+        [disabled]="currentStep() === 0"
+        (click)="prevStep()"
+      >
+        ← Previous
+      </button>
+
+      <span class="text-xs text-slate-600">
+        {{ currentStep() + 1 }} / {{ steps.length }}
+      </span>
+
+      @if (currentStep() < steps.length - 1) {
+        <button
+          class="rounded-lg bg-arbiter-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-arbiter-500/20 transition-all hover:bg-arbiter-600 active:scale-95"
+          (click)="nextStep()"
+        >
+          Next →
+        </button>
+      } @else {
+        <button
+          class="rounded-lg bg-surface-800 px-5 py-2.5 text-sm font-medium text-slate-400 transition-all hover:bg-surface-700 hover:text-white"
+          (click)="goToStep(0)"
+        >
+          ↺ Restart Demo
+        </button>
+      }
+    </div>
+  </main>
+</div>

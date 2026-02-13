@@ -1,0 +1,309 @@
+{
+  "stats": {
+    "totalFunctionsScanned": 1948,
+    "totalPackages": 91,
+    "eligibleFunctions": 817,
+    "eligibilityRate": 0.419,
+    "rejectionBreakdown": {
+      "too_simple": 637,
+      "one_liner": 611,
+      "too_few_params": 244,
+      "io_operation": 239,
+      "async_function": 25,
+      "nondeterministic": 8,
+      "too_long": 4,
+      "too_short": 4
+    }
+  },
+  "functions": [
+    {
+      "task": {
+        "task_id": "task_8c77c130",
+        "function_name": "boltons.cacheutils.make_cache_key",
+        "package_name": "boltons",
+        "signature": "def make_cache_key(args, kwargs, typed = False, kwarg_mark = _KWARG_MARK, fasttypes = frozenset([int, str, frozenset, type(None)]))",
+        "context_hint": "Make a generic key from a function's positional and keyword\narguments, suitable for use in caches. Arguments within *args* and\n*kwargs* must be `hashable`_. If *typed* is ``True``, ``3`` and\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def make_cache_key(args, kwargs, typed=False,\n                   kwarg_mark=_KWARG_MARK,\n                   fasttypes=frozenset([int, str, frozenset, type(None)])):\n    \"\"\"Make a generic key from a function's positional and keyword\n    arguments, suitable for use in caches. Arguments within *args* and\n    *kwargs* must be `hashable`_. If *typed* is ``True``, ``3`` and\n    ``3.0`` will be treated as separate keys.\n\n    The key is constructed in a way that is flat as possible rather than\n    as a nested structure that would take more memory.\n\n    If there is only a single argument and its data type is known to cache\n    its hash value, then that argument is returned without a wrapper.  This\n    saves space and improves lookup speed.\n\n    >>> tuple(make_cache_key(('a', 'b'), {'c': ('d')}))\n    ('a', 'b', _KWARG_MARK, ('c', 'd'))\n\n    .. _hashable: https://docs.python.org/2/glossary.html#term-hashable\n    \"\"\"\n\n    # key = [func_name] if func_name else []\n    # key.extend(args)\n    key = list(args)\n    if kwargs:\n        sorted_items = sorted(kwargs.items())\n        key.append(kwarg_mark)\n        key.extend(sorted_items)\n    if typed:\n        key.extend([type(v) for v in args])\n        if kwargs:\n            key.extend([type(v) for k, v in sorted_items])\n    elif len(key) == 1 and type(key[0]) in fasttypes:\n        return key[0]\n    return _HashedKey(key)\n",
+      "metadata": {
+        "lineCount": 36,
+        "paramCount": 5,
+        "complexity": 6,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_ed4c0dfd",
+        "function_name": "click.decorators.group",
+        "package_name": "click",
+        "signature": "def group(name: str | _AnyCallable | None = None, cls: type[GrpType] | None = None, **attrs: t.Any) -> Group | t.Callable[[_AnyCallable], Group | GrpType]",
+        "context_hint": "Creates a new :class:`Group` with a function as callback.  This\nworks otherwise the same as :func:`command` just that the `cls`\nparameter is set to :class:`Group`.\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def group(\n    name: str | _AnyCallable | None = None,\n    cls: type[GrpType] | None = None,\n    **attrs: t.Any,\n) -> Group | t.Callable[[_AnyCallable], Group | GrpType]:\n    \"\"\"Creates a new :class:`Group` with a function as callback.  This\n    works otherwise the same as :func:`command` just that the `cls`\n    parameter is set to :class:`Group`.\n\n    .. versionchanged:: 8.1\n        This decorator can be applied without parentheses.\n    \"\"\"\n    if cls is None:\n        cls = t.cast(\"type[GrpType]\", Group)\n\n    if callable(name):\n        return command(cls=cls, **attrs)(name)\n\n    return command(name, cls, **attrs)\n",
+      "metadata": {
+        "lineCount": 20,
+        "paramCount": 2,
+        "complexity": 3,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_60ba3568",
+        "function_name": "colorama.initialise.init",
+        "package_name": "colorama",
+        "signature": "def init(autoreset = False, convert = None, strip = None, wrap = True)",
+        "context_hint": "(no existing docstring)",
+        "deadline_seconds": 300
+      },
+      "source": "def init(autoreset=False, convert=None, strip=None, wrap=True):\n\n    if not wrap and any([autoreset, convert, strip]):\n        raise ValueError('wrap=False conflicts with any other arg=True')\n\n    global wrapped_stdout, wrapped_stderr\n    global orig_stdout, orig_stderr\n\n    orig_stdout = sys.stdout\n    orig_stderr = sys.stderr\n\n    if sys.stdout is None:\n        wrapped_stdout = None\n    else:\n        sys.stdout = wrapped_stdout = \\\n            wrap_stream(orig_stdout, convert, strip, autoreset, wrap)\n    if sys.stderr is None:\n        wrapped_stderr = None\n    else:\n        sys.stderr = wrapped_stderr = \\\n            wrap_stream(orig_stderr, convert, strip, autoreset, wrap)\n\n    global atexit_done\n    if not atexit_done:\n        atexit.register(reset_all)\n        atexit_done = True\n",
+      "metadata": {
+        "lineCount": 27,
+        "paramCount": 4,
+        "complexity": 6,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_6717b832",
+        "function_name": "dacite.core.from_dict",
+        "package_name": "dacite",
+        "signature": "def from_dict(data_class: Type[T], data: Data, config: Optional[Config] = None) -> T",
+        "context_hint": "Create a data class instance from a dictionary.\n\n:param data_class: a data class type\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def from_dict(data_class: Type[T], data: Data, config: Optional[Config] = None) -> T:\n    \"\"\"Create a data class instance from a dictionary.\n\n    :param data_class: a data class type\n    :param data: a dictionary of a input data\n    :param config: a configuration of the creation process\n    :return: an instance of a data class\n    \"\"\"\n    init_values: MutableMapping[str, Any] = {}\n    post_init_values: MutableMapping[str, Any] = {}\n    config = config or Config()\n\n    try:\n        data_class_hints = cache(get_concrete_type_hints)(data_class, localns=config.hashable_forward_references)\n    except NameError as error:\n        raise ForwardReferenceError(str(error)) from None\n    data_class_fields = cache(get_fields)(data_class)\n\n    if config.strict:\n        extra_fields = set(data.keys()) - {f.name for f in data_class_fields}\n        if extra_fields:\n            raise UnexpectedDataError(keys=extra_fields)\n\n    for field in data_class_fields:\n        field_type = data_class_hints[field.name]\n        key = config.convert_key(field.name)\n\n        if key in data:\n            try:\n                value = _build_value(type_=field_type, data=data[key], config=config)\n            except DaciteFieldError as error:\n                error.update_path(field.name)\n                raise\n            if config.check_types and not is_instance(value, field_type):\n                raise WrongTypeError(field_path=field.name, field_type=field_type, value=value)\n        else:\n            try:\n                value = get_default_value_for_field(field, field_type)\n            except DefaultValueNotFoundError:\n                if not field.init:\n                    continue\n                raise MissingValueError(field.name) from None\n        if field.init:\n            init_values[field.name] = value\n        elif not is_frozen(data_class):\n            post_init_values[field.name] = value\n\n    instance = data_class(**init_values)\n\n    for key, value in post_init_values.items():\n        setattr(instance, key, value)\n\n    return instance\n",
+      "metadata": {
+        "lineCount": 54,
+        "paramCount": 3,
+        "complexity": 15,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_85d9297c",
+        "function_name": "dpath.segments.extend",
+        "package_name": "dpath",
+        "signature": "def extend(thing: MutableSequence, index: int, value = None)",
+        "context_hint": "Extend a sequence like thing such that it contains at least index +\n1 many elements. The extension values will be None (default).\n\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def extend(thing: MutableSequence, index: int, value=None):\n    \"\"\"\n    Extend a sequence like thing such that it contains at least index +\n    1 many elements. The extension values will be None (default).\n\n    extend(thing, int) -> [thing..., None, ...]\n    \"\"\"\n    try:\n        expansion = type(thing)()\n\n        # Using this rather than the multiply notation in order to support a\n        # wider variety of sequence like things.\n        extra = (index + 1) - len(thing)\n        for i in range(extra):\n            expansion += [value]\n        thing.extend(expansion)\n    except TypeError:\n        # We attempted to extend something that doesn't support it. In\n        # this case we assume thing is actually more like a dictionary\n        # and doesn't need to be extended.\n        pass\n\n    return thing\n",
+      "metadata": {
+        "lineCount": 24,
+        "paramCount": 3,
+        "complexity": 3,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_e1067441",
+        "function_name": "geojson.utils.map_geometries",
+        "package_name": "geojson",
+        "signature": "def map_geometries(func, obj)",
+        "context_hint": "Returns the result of passing every geometry in the given geojson object\nthrough func.\n\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def map_geometries(func, obj):\n    \"\"\"\n    Returns the result of passing every geometry in the given geojson object\n    through func.\n\n    :param func: Function to apply to tuples\n    :type func: function\n    :param obj: A geometry or feature to extract the coordinates from.\n    :type obj: GeoJSON\n    :return: The result of applying the function to each geometry\n    :rtype: list\n    :raises ValueError: if the provided object is not geojson.\n    \"\"\"\n    simple_types = [\n        'Point',\n        'LineString',\n        'MultiPoint',\n        'MultiLineString',\n        'Polygon',\n        'MultiPolygon',\n    ]\n\n    if obj['type'] in simple_types:\n        return func(obj)\n    elif obj['type'] == 'GeometryCollection':\n        geoms = [func(geom) if geom else None for geom in obj['geometries']]\n        return {'type': obj['type'], 'geometries': geoms}\n    elif obj['type'] == 'Feature':\n        obj['geometry'] = func(obj['geometry']) if obj['geometry'] else None\n        return obj\n    elif obj['type'] == 'FeatureCollection':\n        feats = [map_geometries(func, feat) for feat in obj['features']]\n        return {'type': obj['type'], 'features': feats}\n    else:\n        raise ValueError(f\"Invalid GeoJSON object {obj!r}\")\n",
+      "metadata": {
+        "lineCount": 36,
+        "paramCount": 2,
+        "complexity": 7,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_6973efb0",
+        "function_name": "hpack.hpack.decode_integer",
+        "package_name": "hpack",
+        "signature": "def decode_integer(data: bytes, prefix_bits: int) -> tuple[int, int]",
+        "context_hint": "Decodes an integer according to the wacky integer encoding rules\ndefined in the HPACK spec. Returns a tuple of the decoded integer and the\nnumber of bytes that were consumed from ``data`` in order to get that\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def decode_integer(data: bytes, prefix_bits: int) -> tuple[int, int]:\n    \"\"\"\n    Decodes an integer according to the wacky integer encoding rules\n    defined in the HPACK spec. Returns a tuple of the decoded integer and the\n    number of bytes that were consumed from ``data`` in order to get that\n    integer.\n    \"\"\"\n    if prefix_bits < 1 or prefix_bits > 8:\n        msg = f\"Prefix bits must be between 1 and 8, got {prefix_bits}\"\n        raise ValueError(msg)\n\n    max_number = _PREFIX_BIT_MAX_NUMBERS[prefix_bits]\n    index = 1\n    shift = 0\n    mask = (0xFF >> (8 - prefix_bits))\n\n    try:\n        number = data[0] & mask\n        if number == max_number:\n            while True:\n                next_byte = data[index]\n                index += 1\n\n                if next_byte >= 128:\n                    number += (next_byte - 128) << shift\n                else:\n                    number += next_byte << shift\n                    break\n                shift += 7\n\n    except IndexError as err:\n        msg = f\"Unable to decode HPACK integer representation from {data!r}\"\n        raise HPACKDecodingError(msg) from err\n\n    log.debug(\"Decoded %d, consumed %d bytes\", number, index)\n\n    return number, index\n",
+      "metadata": {
+        "lineCount": 38,
+        "paramCount": 2,
+        "complexity": 7,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_8967fddf",
+        "function_name": "invoke.completion.complete.complete",
+        "package_name": "invoke",
+        "signature": "def complete(names: List[str], core: 'ParseResult', initial_context: 'ParserContext', collection: 'Collection', parser: 'Parser') -> Exit",
+        "context_hint": "(no existing docstring)",
+        "deadline_seconds": 300
+      },
+      "source": "def complete(\n    names: List[str],\n    core: \"ParseResult\",\n    initial_context: \"ParserContext\",\n    collection: \"Collection\",\n    parser: \"Parser\",\n) -> Exit:\n    # Strip out program name (scripts give us full command line)\n    # TODO: this may not handle path/to/script though?\n    invocation = re.sub(r\"^({}) \".format(\"|\".join(names)), \"\", core.remainder)\n    debug(\"Completing for invocation: {!r}\".format(invocation))\n    # Tokenize (shlex will have to do)\n    tokens = shlex.split(invocation)\n    # Handle flags (partial or otherwise)\n    if tokens and tokens[-1].startswith(\"-\"):\n        tail = tokens[-1]\n        debug(\"Invocation's tail {!r} is flag-like\".format(tail))\n        # Gently parse invocation to obtain 'current' context.\n        # Use last seen context in case of failure (required for\n        # otherwise-invalid partial invocations being completed).\n\n        contexts: List[ParserContext]\n        try:\n            debug(\"Seeking context name in tokens: {!r}\".format(tokens))\n            contexts = parser.parse_argv(tokens)\n        except ParseError as e:\n            msg = \"Got parser error ({!r}), grabbing its last-seen context {!r}\"  # noqa\n            debug(msg.format(e, e.context))\n            contexts = [e.context] if e.context is not None else []\n        # Fall back to core context if no context seen.\n        debug(\"Parsed invocation, contexts: {!r}\".format(contexts))\n        if not contexts or not contexts[-1]:\n            context = initial_context\n        else:\n            context = contexts[-1]\n        debug(\"Selected context: {!r}\".format(context))\n        # Unknown flags (could be e.g. only partially typed out; could be\n        # wholly invalid; doesn't matter) complete with flags.\n        debug(\"Looking for {!r} in {!r}\".format(tail, context.flags))\n        if tail not in context.flags:\n            debug(\"Not found, completing with flag names\")\n            # Long flags - partial or just the dashes - complete w/ long flags\n            if tail.startswith(\"--\"):\n                for name in filter(\n                    lambda x: x.startswith(\"--\"), context.flag_names()\n                ):\n                    print(name)\n            # Just a dash, completes with all flags\n            elif tail == \"-\":\n                for name in context.flag_names():\n                    print(name)\n            # Otherwise, it's something entirely invalid (a shortflag not\n            # recognized, or a java style flag like -foo) so return nothing\n            # (the shell will still try completing with files, but that doesn't\n            # hurt really.)\n            else:\n                pass\n        # Known flags complete w/ nothing or tasks, depending\n        else:\n            # Flags expecting values: do nothing, to let default (usually\n            # file) shell completion occur (which we actively want in this\n            # case.)\n            if context.flags[tail].takes_value:\n                debug(\"Found, and it takes a value, so no completion\")\n                pass\n            # Not taking values (eg bools): print task names\n            else:\n                debug(\"Found, takes no value, printing task names\")\n                print_task_names(collection)\n    # If not a flag, is either task name or a flag value, so just complete\n    # task names.\n    else:\n        debug(\"Last token isn't flag-like, just printing task names\")\n        print_task_names(collection)\n    raise Exit\n",
+      "metadata": {
+        "lineCount": 76,
+        "paramCount": 5,
+        "complexity": 13,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_d9133067",
+        "function_name": "jsonpickle.pickler.encode",
+        "package_name": "jsonpickle",
+        "signature": "def encode(value, unpicklable = True, make_refs = True, keys = False, max_depth = None, reset = True, backend = None, warn = False, context = None, max_iter = None, use_decimal = False, numeric_keys = False, use_base85 = False, fail_safe = None, indent = None, separators = None, include_properties = False, handle_readonly = False)",
+        "context_hint": "Return a JSON formatted representation of value, a Python object.\n\n:param unpicklable: If set to ``False`` then the output will not contain the\n...",
+        "deadline_seconds": 300
+      },
+      "source": "def encode(\n    value,\n    unpicklable=True,\n    make_refs=True,\n    keys=False,\n    max_depth=None,\n    reset=True,\n    backend=None,\n    warn=False,\n    context=None,\n    max_iter=None,\n    use_decimal=False,\n    numeric_keys=False,\n    use_base85=False,\n    fail_safe=None,\n    indent=None,\n    separators=None,\n    include_properties=False,\n    handle_readonly=False,\n):\n    \"\"\"Return a JSON formatted representation of value, a Python object.\n\n    :param unpicklable: If set to ``False`` then the output will not contain the\n        information necessary to turn the JSON data back into Python objects,\n        but a simpler JSON stream is produced. It's recommended to set this\n        parameter to ``False`` when your code does not rely on two objects\n        having the same ``id()`` value, and when it is sufficient for those two\n        objects to be equal by ``==``, such as when serializing sklearn\n        instances. If you experience (de)serialization being incorrect when you\n        use numpy, pandas, or sklearn handlers, this should be set to ``False``.\n        If you want the output to not include the dtype for numpy arrays, add::\n\n            jsonpickle.register(\n                numpy.generic, UnpicklableNumpyGenericHandler, base=True\n            )\n\n        before your pickling code.\n    :param make_refs: If set to False jsonpickle's referencing support is\n        disabled.  Objects that are id()-identical won't be preserved across\n        encode()/decode(), but the resulting JSON stream will be conceptually\n        simpler.  jsonpickle detects cyclical objects and will break the cycle\n        by calling repr() instead of recursing when make_refs is set False.\n    :param keys: If set to True then jsonpickle will encode non-string\n        dictionary keys instead of coercing them into strings via `repr()`.\n        This is typically what you want if you need to support Integer or\n        objects as dictionary keys.\n    :param max_depth: If set to a non-negative integer then jsonpickle will\n        not recurse deeper than 'max_depth' steps into the object.  Anything\n        deeper than 'max_depth' is represented using a Python repr() of the\n        object.\n    :param reset: Custom pickle handlers that use the `Pickler.flatten` method or\n        `jsonpickle.encode` function must call `encode` with `reset=False`\n        in order to retain object references during pickling.\n        This flag is not typically used outside of a custom handler or\n        `__getstate__` implementation.\n    :param backend: If set to an instance of jsonpickle.backend.JSONBackend,\n        jsonpickle will use that backend for deserialization.\n    :param warn: If set to True then jsonpickle will warn when it\n        returns None for an object which it cannot pickle\n        (e.g. file descriptors).\n    :param context: Supply a pre-built Pickler or Unpickler object to the\n        `jsonpickle.encode` and `jsonpickle.decode` machinery instead\n        of creating a new instance. The `context` represents the currently\n        active Pickler and Unpickler objects when custom handlers are\n        invoked by jsonpickle.\n    :param max_iter: If set to a non-negative integer then jsonpickle will\n        consume at most `max_iter` items when pickling iterators.\n    :param use_decimal: If set to True jsonpickle will allow Decimal\n        instances to pass-through, with the assumption that the simplejson\n        backend will be used in `use_decimal` mode.  In order to use this mode\n        you will need to configure simplejson::\n\n            jsonpickle.set_encoder_options('simplejson',\n                                           use_decimal=True, sort_keys=True)\n            jsonpickle.set_decoder_options('simplejson',\n                                           use_decimal=True)\n            jsonpickle.set_preferred_backend('simplejson')\n\n        NOTE: A side-effect of the above settings is that float values will be\n        converted to Decimal when converting to json.\n    :param numeric_keys: Only use this option if the backend supports integer\n        dict keys natively.  This flag tells jsonpickle to leave numeric keys\n        as-is rather than conforming them to json-friendly strings.\n        Using ``keys=True`` is the typical solution for integer keys, so only\n        use this if you have a specific use case where you want to allow the\n        backend to handle serialization of numeric dict keys.\n    :param use_base85:\n        If possible, use base85 to encode binary data. Base85 bloats binary data\n        by 1/4 as opposed to base64, which expands it by 1/3. This argument is\n        ignored on Python 2 because it doesn't support it.\n    :param fail_safe: If set to a function exceptions are ignored when pickling\n        and if a exception happens the function is called and the return value\n        is used as the value for the object that caused the error\n    :param indent: When `indent` is a non-negative integer, then JSON array\n        elements and object members will be pretty-printed with that indent\n        level.  An indent level of 0 will only insert newlines. ``None`` is\n        the most compact representation.  Since the default item separator is\n        ``(', ', ': ')``,  the output might include trailing whitespace when\n        ``indent`` is specified.  You can use ``separators=(',', ': ')`` to\n        avoid this.  This value is passed directly to the active JSON backend\n        library and not used by jsonpickle directly.\n    :param separators:\n        If ``separators`` is an ``(item_separator, dict_separator)`` tuple\n        then it will be used instead of the default ``(', ', ': ')``\n        separators.  ``(',', ':')`` is the most compact JSON representation.\n        This value is passed directly to the active JSON backend library and\n        not used by jsonpickle directly.\n    :param include_properties:\n        Include the names and values of class properties in the generated json.\n        Properties are unpickled properly regardless of this setting, this is\n        meant to be used if processing the json outside of Python. Certain types\n        such as sets will not pickle due to not having a native-json equivalent.\n        Defaults to ``False``.\n    :param handle_readonly:\n        Handle objects with readonly methods, such as Django's SafeString. This\n        basically prevents jsonpickle from raising an exception for such objects.\n        You MUST set ``handle_readonly=True`` for the decoding if you encode with\n        this flag set to ``True``.\n\n    >>> encode('my string') == '\"my string\"'\n    True\n    >>> encode(36) == '36'\n    True\n    >>> encode({'foo': True}) == '{\"foo\": true}'\n    True\n    >>> encode({'foo': [1, 2, [3, 4]]}, max_depth=1)\n    '{\"foo\": \"[1, 2, [3, 4]]\"}'\n\n    \"\"\"\n    backend = backend or json\n    context = context or Pickler(\n        unpicklable=unpicklable,\n        make_refs=make_refs,\n        keys=keys,\n        backend=backend,\n        max_depth=max_depth,\n        warn=warn,\n        max_iter=max_iter,\n        numeric_keys=numeric_keys,\n        use_decimal=use_decimal,\n        use_base85=use_base85,\n        fail_safe=fail_safe,\n        include_properties=include_properties,\n        handle_readonly=handle_readonly,\n        original_object=value,\n    )\n    return backend.encode(\n        context.flatten(value, reset=reset), indent=indent, separators=separators\n    )\n",
+      "metadata": {
+        "lineCount": 150,
+        "paramCount": 18,
+        "complexity": 3,
+        "hasTypeHints": false
+      }
+    },
+    {
+      "task": {
+        "task_id": "task_f0d9f6df",
+        "function_name": "requests.check_compatibility",
+        "package_name": "requests",
+        "signature": "def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version)",
+        "context_hint": "(no existing docstring)",
+        "deadline_seconds": 300
+      },
+      "source": "def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):\n    urllib3_version = urllib3_version.split(\".\")\n    assert urllib3_version != [\"dev\"]  # Verify urllib3 isn't installed from git.\n\n    # Sometimes, urllib3 only reports its version as 16.1.\n    if len(urllib3_version) == 2:\n        urllib3_version.append(\"0\")\n\n    # Check urllib3 for compatibility.\n    major, minor, patch = urllib3_version  # noqa: F811\n    major, minor, patch = int(major), int(minor), int(patch)\n    # urllib3 >= 1.21.1\n    assert major >= 1\n    if major == 1:\n        assert minor >= 21\n\n    # Check charset_normalizer for compatibility.\n    if chardet_version:\n        major, minor, patch = chardet_version.split(\".\")[:3]\n        major, minor, patch = int(major), int(minor), int(patch)\n        # chardet_version >= 3.0.2, < 6.0.0\n        assert (3, 0, 2) <= (major, minor, patch) < (6, 0, 0)\n    elif charset_normalizer_version:\n        major, minor, patch = charset_normalizer_version.split(\".\")[:3]\n        major, minor, patch = int(major), int(minor), int(patch)\n        # charset_normalizer >= 2.0.0 < 4.0.0\n        assert (2, 0, 0) <= (major, minor, patch) < (4, 0, 0)\n    else:\n        warnings.warn(\n            \"Unable to find acceptable character detection dependency \"\n            \"(chardet or charset_normalizer).\",\n            RequestsDependencyWarning,\n        )\n",
+      "metadata": {
+        "lineCount": 34,
+        "paramCount": 3,
+        "complexity": 10,
+        "hasTypeHints": false
+      }
+    }
+  ],
+  "terminalOutput": {
+    "loadingSequence": [
+      "Loading sampled_functions/aiocache.pickle... 1 functions",
+      "Loading sampled_functions/aiofiles.pickle... 7 functions",
+      "Loading sampled_functions/aioquic.pickle... 2 functions",
+      "Loading sampled_functions/appdirs.pickle... 7 functions",
+      "Loading sampled_functions/argh.pickle... 13 functions",
+      "Loading sampled_functions/asyncstdlib.pickle... 41 functions",
+      "Loading sampled_functions/avalara.pickle... 1 functions",
+      "Loading sampled_functions/boltons.pickle... 152 functions",
+      "Loading sampled_functions/click.pickle... 38 functions",
+      "Loading sampled_functions/colorama.pickle... 18 functions",
+      "Loading sampled_functions/cycler.pickle... 2 functions",
+      "Loading sampled_functions/dacite.pickle... 9 functions",
+      "Loading sampled_functions/darglint.pickle... 27 functions",
+      "Loading sampled_functions/deptry.pickle... 3 functions",
+      "Loading sampled_functions/devtools.pickle... 9 functions",
+      "Loading sampled_functions/dill.pickle... 160 functions",
+      "Loading sampled_functions/docling.pickle... 5 functions",
+      "Loading sampled_functions/dpath.pickle... 24 functions",
+      "Loading sampled_functions/dvc-data.pickle... 3 functions",
+      "Loading sampled_functions/ec2-metadata.pickle... 4 functions",
+      "Loading sampled_functions/emails.pickle... 46 functions",
+      "Loading sampled_functions/evergreen-lint.pickle... 7 functions",
+      "Loading sampled_functions/fake-http-header.pickle... 1 functions",
+      "Loading sampled_functions/fastjsonschema.pickle... 10 functions",
+      "Loading sampled_functions/flower.pickle... 5 functions",
+      "Loading sampled_functions/geojson.pickle... 13 functions",
+      "Loading sampled_functions/granian.pickle... 1 functions",
+      "Loading sampled_functions/groovy.pickle... 1 functions",
+      "Loading sampled_functions/gunicorn.pickle... 91 functions",
+      "Loading sampled_functions/hpack.pickle... 4 functions",
+      "Loading sampled_functions/ijson.pickle... 59 functions",
+      "Loading sampled_functions/installer.pickle... 10 functions",
+      "Loading sampled_functions/invoke.pickle... 61 functions",
+      "Loading sampled_functions/itypes.pickle... 2 functions",
+      "Loading sampled_functions/json5.pickle... 6 functions",
+      "Loading sampled_functions/jsonpickle.pickle... 52 functions",
+      "Loading sampled_functions/latex2mathml.pickle... 9 functions",
+      "Loading sampled_functions/lazy-loader.pickle... 4 functions",
+      "Loading sampled_functions/lib-detect-testenv.pickle... 10 functions",
+      "Loading sampled_functions/libtmux.pickle... 22 functions",
+      "Loading sampled_functions/lmdb.pickle... 21 functions",
+      "Loading sampled_functions/lorem.pickle... 3 functions",
+      "Loading sampled_functions/markupsafe.pickle... 3 functions",
+      "Loading sampled_functions/mistletoe.pickle... 48 functions",
+      "Loading sampled_functions/modin.pickle... 11 functions",
+      "Loading sampled_functions/mss.pickle... 3 functions",
+      "Loading sampled_functions/multiprocess.pickle... 104 functions",
+      "Loading sampled_functions/mypy-extensions.pickle... 8 functions",
+      "Loading sampled_functions/oras.pickle... 30 functions",
+      "Loading sampled_functions/pandocfilters.pickle... 41 functions",
+      "Loading sampled_functions/parsedatetime.pickle... 3 functions",
+      "Loading sampled_functions/patch-ng.pickle... 13 functions",
+      "Loading sampled_functions/pathvalidate.pickle... 7 functions",
+      "Loading sampled_functions/peewee.pickle... 25 functions",
+      "Loading sampled_functions/pika.pickle... 28 functions",
+      "Loading sampled_functions/pox.pickle... 45 functions",
+      "Loading sampled_functions/publicsuffix2.pickle... 4 functions",
+      "Loading sampled_functions/pulp.pickle... 38 functions",
+      "Loading sampled_functions/pycodestyle.pickle... 40 functions",
+      "Loading sampled_functions/pycountry.pickle... 3 functions",
+      "Loading sampled_functions/pydot.pickle... 14 functions",
+      "Loading sampled_functions/pyfaidx.pickle... 17 functions",
+      "Loading sampled_functions/pylev.pickle... 5 functions",
+      "Loading sampled_functions/pymemcache.pickle... 5 functions",
+      "Loading sampled_functions/pymysql.pickle... 33 functions",
+      "Loading sampled_functions/pypandoc.pickle... 14 functions",
+      "Loading sampled_functions/pypdf.pickle... 4 functions",
+      "Loading sampled_functions/pyxlsb.pickle... 2 functions",
+      "Loading sampled_functions/requests.pickle... 61 functions",
+      "Loading sampled_functions/schedule.pickle... 8 functions",
+      "Loading sampled_functions/six.pickle... 19 functions",
+      "Loading sampled_functions/slack-sdk.pickle... 10 functions",
+      "Loading sampled_functions/sql-formatter.pickle... 55 functions",
+      "Loading sampled_functions/sqllineage.pickle... 10 functions",
+      "Loading sampled_functions/subprocess32.pickle... 7 functions",
+      "Loading sampled_functions/sudachipy.pickle... 3 functions",
+      "Loading sampled_functions/supervisor.pickle... 138 functions",
+      "Loading sampled_functions/swig.pickle... 1 functions",
+      "Loading sampled_functions/terminaltables.pickle... 12 functions",
+      "Loading sampled_functions/toml.pickle... 4 functions",
+      "Loading sampled_functions/uri-template.pickle... 3 functions",
+      "Loading sampled_functions/uritemplate.pickle... 7 functions",
+      "Loading sampled_functions/uritools.pickle... 13 functions",
+      "Loading sampled_functions/urllib3.pickle... 40 functions",
+      "Loading sampled_functions/versioneer.pickle... 3 functions",
+      "Loading sampled_functions/waybackpy.pickle... 10 functions",
+      "Loading sampled_functions/whisperx.pickle... 21 functions",
+      "Loading sampled_functions/workdays.pickle... 3 functions",
+      "Loading sampled_functions/zict.pickle... 4 functions",
+      "Loading sampled_functions/zipfile36.pickle... 1 functions",
+      "Loading sampled_functions/zopfli.pickle... 3 functions"
+    ],
+    "filterSummary": "Loaded 1,948 functions from 91 packages\nRunning eligibility filter...\n\n  Eligible:  817 (41.9%)\n  Rejected:  1,131\n\n  Rejection breakdown:\n    too_simple             637  ( 32.7%)  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n    one_liner              611  ( 31.4%)  \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2588\n    too_few_params         244  ( 12.5%)  \u2588\u2588\u2588\u2588\u2588\n    io_operation           239  ( 12.3%)  \u2588\u2588\u2588\u2588\n    async_function          25  (  1.3%)  \n    nondeterministic         8  (  0.4%)  \n    too_long                 4  (  0.2%)  \n    too_short                4  (  0.2%)  ",
+    "sampleTaskLines": [
+      "======================================================================",
+      "  MINER TASK \u2014 What the miner receives",
+      "======================================================================",
+      "",
+      "  Task ID:       task_8c77c130",
+      "  Package:       boltons",
+      "  Function:      boltons.cacheutils.make_cache_key",
+      "  Deadline:      300s",
+      "",
+      "  \u2500\u2500 SIGNATURE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+      "    def make_cache_key(args, kwargs, typed = False, kwarg_mark = _KWARG_MARK, fasttypes = frozenset([int, str, frozenset, type(None)]))",
+      "",
+      "  \u2500\u2500 CONTEXT HINT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+      "    Make a generic key from a function's positional and keyword\narguments, suitable for use in caches. Arguments within *args* and\n*kwargs* must be `hashable`_. If *typed* is ``True``, ``3`` and\n...",
+      "",
+      "\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+      "  The miner must now:",
+      "    1. pip install boltons",
+      "    2. Read the source: inspect.getsource(boltons.cacheutils.make_cache_key)",
+      "    3. Write documentation with working examples",
+      "    4. Submit before the deadline"
+    ]
+  }
+}
