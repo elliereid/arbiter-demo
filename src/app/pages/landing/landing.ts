@@ -10,6 +10,7 @@ import {
   TerminalSimulationComponent,
   TerminalLine,
 } from '../../components/terminal-simulation/terminal-simulation';
+import { ArbiterBadgeComponent } from '../../components/arbiter-badge/arbiter-badge';
 import { PYPI_DATASET } from '../../data/pypi-dataset';
 
 @Component({
@@ -17,7 +18,7 @@ import { PYPI_DATASET } from '../../data/pypi-dataset';
   templateUrl: './landing.html',
   styleUrl: './landing.css',
   standalone: true,
-  imports: [RouterLink, DecimalPipe, CodeBlockComponent, TerminalSimulationComponent],
+  imports: [RouterLink, DecimalPipe, CodeBlockComponent, TerminalSimulationComponent, ArbiterBadgeComponent],
 })
 export class LandingComponent {
   readonly stats = PYPI_DATASET.stats;

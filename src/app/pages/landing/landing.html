@@ -9,12 +9,10 @@
   <header class="sticky top-0 z-50 border-b border-surface-700 bg-surface-900/80 backdrop-blur-lg">
     <div class="container flex items-center justify-between py-4">
       <div class="flex items-center gap-3">
-        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-arbiter-500 font-mono text-sm font-bold text-white">
-          A
-        </div>
+        <app-arbiter-badge size="md" class="text-arbiter-400" />
         <div>
           <h1 class="text-lg font-semibold text-white">Arbiter</h1>
-          <p class="text-xs text-slate-500">Bittensor Documentation Subnet</p>
+          <p class="text-xs text-slate-500">Bittensor Verification Network</p>
         </div>
       </div>
 
@@ -36,16 +34,19 @@
     [class.revealed]="isSectionRevealed(0)"
   >
     <div class="max-w-3xl space-y-6">
-      <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">
-        Bittensor Subnet
-      </p>
+      <div class="flex items-center gap-3">
+        <app-arbiter-badge size="lg" variant="glow" class="text-arbiter-400" />
+        <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">
+          Bittensor Verification Network
+        </p>
+      </div>
       <h2 class="text-5xl font-bold leading-tight text-white md:text-6xl">
-        Documentation for every function on
-        <span class="text-arbiter-400">PyPI</span>.
+        A <span class="text-arbiter-400">verification</span> network
+        for open-source code.
       </h2>
       <p class="max-w-xl text-xl leading-relaxed text-slate-400">
-        A decentralized network that pays miners to write high-quality documentation
-        for undocumented open-source code — scored deterministically, rewarded in TAO.
+        A decentralized network that verifies open-source code — starting with documentation.
+        Miners produce. Validators verify. The best work earns TAO.
       </p>
 
       <!-- Stat pills -->
@@ -81,8 +82,8 @@
           Most open-source code is <span class="text-red-400">undocumented</span>.
         </h3>
         <p class="text-lg leading-relaxed text-slate-400">
-          This is a real function from a real PyPI package. No docstring. No type hints.
-          No usage examples. This is the norm, not the exception.
+          Open-source ecosystems are full of unverified code. No documentation. No type safety.
+          No guarantees. This is a real function from a real package — and it's the norm.
         </p>
       </div>
 
@@ -106,7 +107,7 @@
         <div class="flex flex-col justify-center gap-4 lg:col-span-2">
           <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
             <p class="text-3xl font-bold text-white">450K+</p>
-            <p class="mt-1 text-sm text-slate-500">Python packages on PyPI</p>
+            <p class="mt-1 text-sm text-slate-500">packages on PyPI alone</p>
           </div>
           <div class="rounded-xl border border-red-500/20 bg-red-500/5 p-5">
             <p class="text-3xl font-bold text-red-400">~70%</p>
@@ -133,11 +134,12 @@
       <div class="max-w-2xl space-y-3">
         <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">The Solution</p>
         <h3 class="text-4xl font-bold text-white">
-          Market incentives for <span class="text-arbiter-400">documentation</span>.
+          Market incentives for <span class="text-arbiter-400">verification</span>.
         </h3>
         <p class="text-lg leading-relaxed text-slate-400">
-          Arbiter turns documentation into a competitive market. Miners earn TAO by writing
-          docs. Validators verify them deterministically. The best documentation wins.
+          Arbiter turns code verification into a competitive market. Miners earn TAO by producing
+          verified artifacts — documentation, type annotations, executable examples. Validators
+          verify them deterministically. Quality wins.
         </p>
       </div>
 
@@ -150,7 +152,7 @@
           </div>
           <h4 class="text-sm font-semibold text-white">Validator Selects</h4>
           <p class="text-xs leading-relaxed text-slate-500">
-            Picks an undocumented function from 450K+ packages
+            Selects an unverified artifact from the open-source ecosystem
           </p>
         </div>
 
@@ -194,7 +196,7 @@
           </div>
           <h4 class="text-sm font-semibold text-white">TAO Rewards</h4>
           <p class="text-xs leading-relaxed text-slate-500">
-            Best documentation earns TAO. Market drives quality up over time.
+            Highest-quality verified output earns TAO. Market drives quality up.
           </p>
         </div>
       </div>
@@ -207,6 +209,30 @@
           Types either match or they don't. Every validator independently reaches the same score.
           There are no answers to leak, no subjective judgments to manipulate, and no collusion surface.
         </p>
+      </div>
+
+      <!-- Verification breadth — what can be verified -->
+      <div class="space-y-4">
+        <p class="text-sm font-medium uppercase tracking-widest text-slate-500">What can be verified</p>
+        <div class="grid gap-4 md:grid-cols-4">
+          <div class="rounded-xl border border-arbiter-500/30 bg-arbiter-500/5 p-5 text-center">
+            <app-arbiter-badge size="sm" variant="default" class="text-arbiter-400" />
+            <p class="mt-3 text-sm font-semibold text-white">Code Documentation</p>
+            <p class="mt-1 text-xs font-medium text-arbiter-400">Live now</p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800/50 p-5 text-center opacity-50">
+            <p class="text-sm font-semibold text-slate-300">API Contracts</p>
+            <p class="mt-1 text-xs text-slate-500">Schema validation</p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800/50 p-5 text-center opacity-50">
+            <p class="text-sm font-semibold text-slate-300">Type Safety</p>
+            <p class="mt-1 text-xs text-slate-500">Cross-language types</p>
+          </div>
+          <div class="rounded-xl border border-surface-700 bg-surface-800/50 p-5 text-center opacity-50">
+            <p class="text-sm font-semibold text-slate-300">Dataset Schemas</p>
+            <p class="mt-1 text-xs text-slate-500">Structure validation</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -227,7 +253,7 @@
         </h3>
         <p class="text-lg leading-relaxed text-slate-400">
           No complex setup. Install the package, configure your strategy, and start earning.
-          Validators and miners are standard Python processes that connect to Bittensor.
+          Validators and miners connect directly to Bittensor. Python-first, with more runtimes coming.
         </p>
       </div>
 
@@ -309,8 +335,8 @@
         </h3>
         <p class="text-lg leading-relaxed text-slate-400">
           This is the real task generation pipeline running against {{ stats.totalFunctionsScanned | number }}
-          functions from {{ stats.totalPackages }} PyPI packages. The validator scans, filters,
-          and selects a function for miners to document.
+          functions from {{ stats.totalPackages }} open-source packages. The validator scans, filters,
+          and selects an artifact for miners to verify.
         </p>
       </div>
 
@@ -334,11 +360,11 @@
   >
     <div class="flex flex-col items-center gap-6 text-center">
       <h3 class="text-4xl font-bold text-white">
-        See the full scoring pipeline.
+        See <span class="text-arbiter-400">verification</span> in action.
       </h3>
       <p class="max-w-lg text-lg text-slate-400">
-        Walk through the complete loop: an undocumented function, competing miner submissions,
-        and the deterministic scoring engine that judges them.
+        Walk through the complete loop: an unverified function, competing miner submissions,
+        and the deterministic verification engine that judges them.
       </p>
       <a
         routerLink="/demo"

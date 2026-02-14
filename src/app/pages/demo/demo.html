@@ -11,12 +11,10 @@
       <!-- Logo / Name -->
       <div class="flex items-center gap-3">
         <a routerLink="/" class="flex items-center gap-3 transition-opacity hover:opacity-80">
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-arbiter-500 font-mono text-sm font-bold text-white">
-            A
-          </div>
+          <app-arbiter-badge size="md" class="text-arbiter-400" />
           <div>
             <h1 class="text-lg font-semibold text-white">Arbiter</h1>
-            <p class="text-xs text-slate-500">Bittensor Documentation Subnet</p>
+            <p class="text-xs text-slate-500">Bittensor Verification Network</p>
           </div>
         </a>
       </div>
@@ -57,9 +55,9 @@
             Most open-source code is <span class="text-red-400">undocumented</span>.
           </h2>
           <p class="text-lg leading-relaxed text-slate-400">
-            PyPI hosts over 450,000 Python packages. The majority of public functions have
-            no docstrings, no type hints, and no usage examples. This is the function a miner
-            will be asked to document.
+            The open-source ecosystem is vast and largely unverified. Starting with Python's
+            450,000+ packages on PyPI: most public functions have no docstrings, no type hints,
+            and no usage examples. This is the function a miner will be asked to verify.
           </p>
         </div>
 
@@ -120,10 +118,10 @@
         <div class="max-w-2xl space-y-3">
           <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 2 — Miner Response</p>
           <h2 class="text-4xl font-bold text-white">
-            Miners compete to <span class="text-arbiter-400">document</span> it.
+            Miners compete to <span class="text-arbiter-400">verify</span> it.
           </h2>
           <p class="text-lg leading-relaxed text-slate-400">
-            Each miner receives the same undocumented function and submits documentation:
+            Each miner receives the same unverified function and submits verified artifacts:
             a docstring, type annotations, and executable code examples. Compare a quality
             submission against a lazy one.
           </p>
@@ -202,7 +200,7 @@
     @if (currentStep() === 2) {
       <div class="animate-fade-in space-y-8">
         <div class="max-w-2xl space-y-3">
-          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 3 — The Scoring Engine</p>
+          <p class="text-sm font-medium uppercase tracking-widest text-arbiter-400">Step 3 — The Verification Engine</p>
           <h2 class="text-4xl font-bold text-white">
             Code is the <span class="text-arbiter-400">judge</span>.
           </h2>
@@ -223,7 +221,7 @@
           </button>
         } @else {
           <div class="flex items-center gap-2 text-sm text-arbiter-400">
-            <span class="inline-block h-2 w-2 rounded-full bg-arbiter-500"></span>
+            <app-arbiter-badge size="sm" class="text-arbiter-400" />
             Verification complete
           </div>
         }
@@ -240,9 +238,12 @@
                   </span>
                   <span class="text-sm text-slate-400">Good Submission</span>
                 </div>
-                <span class="font-mono text-2xl font-bold text-emerald-400">
-                  {{ currentFunction().goodScore.totalScore }}
-                </span>
+                <div class="flex items-center gap-2">
+                  <span class="font-mono text-2xl font-bold text-emerald-400">
+                    {{ currentFunction().goodScore.totalScore }}
+                  </span>
+                  <app-arbiter-badge variant="badge" size="sm" />
+                </div>
               </div>
 
               <div class="space-y-4">
@@ -350,9 +351,9 @@
             Powered by <span class="text-arbiter-400">Bittensor</span>.
           </h2>
           <p class="text-lg leading-relaxed text-slate-400">
-            Arbiter runs as a Bittensor subnet. Miners earn TAO by producing high-quality
-            documentation. The better the docs, the higher the score, the more they earn.
-            Market incentives drive documentation quality across the entire Python ecosystem.
+            Arbiter runs as a Bittensor subnet. Miners earn TAO by producing verified artifacts.
+            The higher the quality, the higher the score, the more they earn.
+            Market incentives drive verification quality across open-source ecosystems.
           </p>
         </div>
 
@@ -365,7 +366,7 @@
             </div>
             <h3 class="font-semibold text-white">Validator</h3>
             <p class="text-xs leading-relaxed text-slate-500">
-              Selects undocumented functions from PyPI and sends tasks to miners. Runs deterministic scoring.
+              Selects unverified artifacts from open-source packages and sends tasks to miners. Runs deterministic scoring.
             </p>
           </div>
 
@@ -384,7 +385,7 @@
             </div>
             <h3 class="font-semibold text-white">Miners</h3>
             <p class="text-xs leading-relaxed text-slate-500">
-              Write documentation with docstrings, type annotations, and executable examples. Compete for best scores.
+              Produce verified artifacts — docstrings, type annotations, and executable examples. Compete for best scores.
             </p>
           </div>
 
@@ -409,8 +410,8 @@
           <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
             <p class="text-sm font-semibold text-white">🎲 Random task selection</p>
             <p class="mt-2 text-xs leading-relaxed text-slate-500">
-              Functions are selected randomly from 450K+ packages. Miners can't predict
-              or pre-compute what they'll be asked to document.
+              Artifacts are selected randomly from 450K+ packages and expanding. Miners can't predict
+              or pre-compute what they'll be asked to verify.
             </p>
           </div>
           <div class="rounded-xl border border-surface-700 bg-surface-800 p-5">
@@ -422,13 +423,17 @@
           </div>
         </div>
 
-        <!-- Scale & future -->
+        <!-- The Verification Network -->
         <div class="rounded-xl border border-arbiter-500/30 bg-arbiter-500/5 p-5">
-          <p class="text-sm font-medium text-arbiter-400">🚀 What's Next</p>
-          <p class="mt-1 text-sm leading-relaxed text-slate-400">
-            Arbiter starts with Python and PyPI, then expands to NPM (JavaScript), Cargo (Rust),
-            and more — with a unified scoring interface across all languages. The generated documentation
-            becomes a public good and a commercial API, creating value for the entire developer ecosystem.
+          <div class="flex items-center gap-2">
+            <app-arbiter-badge size="sm" class="text-arbiter-400" />
+            <p class="text-sm font-medium text-arbiter-400">The Verification Network</p>
+          </div>
+          <p class="mt-2 text-sm leading-relaxed text-slate-400">
+            Code documentation is the first verification type — deterministic, executable, and
+            impossible to game. The same architecture extends to API contract validation, type safety
+            verification, dataset schema checks, and configuration auditing. Same incentives, same
+            scoring model, infinite surface area.
           </p>
         </div>
       </div>

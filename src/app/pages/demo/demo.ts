@@ -7,6 +7,7 @@ import {
   TerminalSimulationComponent,
   TerminalLine,
 } from '../../components/terminal-simulation/terminal-simulation';
+import { ArbiterBadgeComponent } from '../../components/arbiter-badge/arbiter-badge';
 import { DEMO_FUNCTIONS, DemoFunction } from '../../data/mock-functions';
 import { PYPI_DATASET } from '../../data/pypi-dataset';
 
@@ -30,11 +31,11 @@ import { PYPI_DATASET } from '../../data/pypi-dataset';
   templateUrl: './demo.html',
   styleUrl: './demo.css',
   standalone: true,
-  imports: [RouterLink, CodeBlockComponent, ScoreBarComponent, StepIndicatorComponent, TerminalSimulationComponent],
+  imports: [RouterLink, CodeBlockComponent, ScoreBarComponent, StepIndicatorComponent, TerminalSimulationComponent, ArbiterBadgeComponent],
 })
 export class DemoComponent {
   /** Steps in the demo flow */
-  readonly steps = ['The Problem', 'Miner Response', 'Scoring Engine', 'The Network'];
+  readonly steps = ['The Problem', 'Miner Response', 'Verification Engine', 'The Network'];
 
   /** Current step index (0-based) */
   currentStep = signal(0);
